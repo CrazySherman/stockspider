@@ -1,7 +1,7 @@
 import scrapy
 from stockspider.items import StatsDate
 # this shit should only read from the file module
-from stockspider.file_utils import incs
+from stockspider.file_utils import load_current_incs
 import re
 
 
@@ -18,9 +18,7 @@ class Financials(scrapy.Spider):
 		print "[Debugging]:: start requesting..."
 		# format urls
 		del self.my_start_urls[:]
-		if type(incs) is not dict:
-			raise NameError("wrong incs type!!!")
-		print  incs
+		incs = load_current_incs()
 		for name, date in incs.items():
 			url = self.template[0] + name + self.template[1]
 			print "[Debugging]:: requesting ", url

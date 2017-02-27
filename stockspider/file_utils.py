@@ -4,7 +4,7 @@
 # 	there're consistency issues on using write_back, espically if there're multiple updates happening at the same time, 
 # 	we should consider using database...but rly?
 
-
+import json
 
 FILE_PATH = "stockspider/inc_list.txt"
 DELIM = " "
@@ -12,25 +12,11 @@ DELIM = " "
 def load_current_incs():
 	res = {}
 	with open(FILE_PATH) as f:
-		for line in f:
-			fields = line.split()
-			print fields
-			if len(fields) == 2:
-				name, date = fields
-			elif len(fields) == 1:
-				name = fields[0]
-				date  =  ''
-			else:
-				print '[Debugging]:: line corrupted...'
-				continue   #corrupt line
-			if not name.isalpha():
-				#also corrupt
-				print '[Debugging]:: line also corrupted...'
-				continue
-			res[name.upper()] = date	
+		objs = json.load(f)
+		for elem in objs:
+			res[elem["name"]] = elem["date"]
+	# print res
 	return res
-
-incs = load_current_incs()
 
 
 def write_back(incs):
@@ -38,8 +24,10 @@ def write_back(incs):
 		print '[Debugging]:: wrong incs type provided'
 		return False
 	with open(FILE_PATH, 'w') as f:
+		objs = []
 		for name, date in incs.items():
-			f.write(name + DELIM + date + '\n')
+			objs.append({"name": name, "date": date})
+		jsonstr = json.dump(objs, f, indent = 4)
 
 	print '[Info]:: file updated successfully'
 	return True
