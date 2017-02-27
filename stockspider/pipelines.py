@@ -6,7 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 from stockspider.file_utils import load_current_incs, write_back
-
+from sendemail.mymail import sendout_email
 
 class StockspiderPipeline(object):
     incs = load_current_incs()
@@ -18,6 +18,8 @@ class StockspiderPipeline(object):
         	print "[Debugging]:: item needs update"
         	incs[item["inc"]] = item["date"]
         	StockspiderPipeline.needupdate = True
+            # send out email becareful when you test this part
+            # sendout_email(item["inc"])
 
         return item
     def close_spider(self, spider):
